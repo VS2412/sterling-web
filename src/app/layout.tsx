@@ -1,16 +1,17 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
+import { Navbar } from "@/components/layout/Navbar";
+import { Footer } from "@/components/layout/Footer";
+import { sanityFetch } from "@/lib/sanity/client";
+import { ALL_CATEGORIES_QUERY } from "@/lib/sanity/queries";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
+import type { Category } from "@/types/sanity";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  variable: "--font-jakarta",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -35,13 +36,23 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  const categories = await sanityFetch<Category[]>({
+    query: ALL_CATEGORIES_QUERY,
+    tags: ["category"],
+  });
+
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">{children}</body>
+    <html lang="en" className={`${jakarta.variable} scroll-smooth`}>
+      <body className="flex min-h-screen flex-col bg-stone-50 font-sans text-neutral-900 antialiased">
+        <Navbar categories={categories} />
+        <div className="flex-1">{children}</div>
+        <Footer categories={categories} />
+      </body>
     </html>
   );
 }

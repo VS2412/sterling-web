@@ -18,7 +18,6 @@ export function buildPageMetadata({
   image,
 }: BuildMetadataParams): Metadata {
   const rawTitle = seoData?.metaTitle?.trim() || fallbackTitle;
-  // Strip trailing "| Sterling" so layout.tsx's title.template doesn't duplicate it
   const cleanTitle = rawTitle.replace(/\s*\|\s*Sterling$/i, "");
   const description = seoData?.metaDescription?.trim() || fallbackDescription;
 
@@ -41,7 +40,14 @@ export function buildPageMetadata({
       url: path,
       type: "website",
       images: ogImageUrl
-        ? [{ url: ogImageUrl, width: 1200, height: 630, alt: image?.alt || cleanTitle }]
+        ? [
+            {
+              url: ogImageUrl,
+              width: 1200,
+              height: 630,
+              alt: image?.alt || cleanTitle,
+            },
+          ]
         : [],
     },
     twitter: {
